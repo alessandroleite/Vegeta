@@ -10,26 +10,32 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import oracle.jdbc.driver.OracleDriver;
 
 public class DataAccessObject {
 	
 	//TODO Jogar conexão para um arquivo de configurações.
-	private String url = "jdbc:oracle:thin:@//127.0.0.1:1521/xe";
-	private String user = "spartacus";
-	private String password = "123";
-	private String schema = "SPARTACUS";
-	private final String pathFile = "D:\\Projects\\vegeta\\files\\spartacus.xml";
+	//private String url = "jdbc:oracle:thin:@//127.0.0.1:1521/xe";
+	//private String user = "spartacus";
+	//private String password = "123";
+	//private String schema = "SPARTACUS";
+	
+	private String url = "jdbc:oracle:thin:@//192.168.0.12:1521/desenv01.logusinfo.com.br";
+	private String user = "FLEX_LOADER_ADM";
+	private String password = "FLEX_LOADER_ADM";
+	private String schema = "FLEX_LOADER_ADM";
+	
+	private final String pathFile = "D:\\Projects\\vegeta\\files\\vegeta.xml";
 	
 	//TODO Remover objeto.
 	private static Connection connection = null;
 	
-	private Map<String, TableVO> tables = 
-			new HashMap<String, TableVO>();
+	private SortedMap<String, TableVO> tables = 
+			new TreeMap<String, TableVO>();
 	
 	public static void main(String[] args) throws SQLException, IOException {
 		DataAccessObject data = new DataAccessObject();		
