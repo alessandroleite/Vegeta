@@ -2,23 +2,27 @@ package com.vegeta.model;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Types;
 
 public class FieldVO {
 
+	private TableVO table;
+	private int seq;
 	private String name;
 	private int typeCod;
 	private String typeName;
-	private int size;
 	private int precision;
 	private int scale;
 	private int nullable;
+	
+	public FieldVO(TableVO table) {
+		this.table = table;
+	}
 		
-	public FieldVO(ResultSetMetaData rs, int field) throws SQLException {
+	public FieldVO(TableVO table, ResultSetMetaData rs, int field) throws SQLException {
+		this.table = table;
 		this.name = rs.getColumnName(field);
 		this.typeCod = rs.getColumnType(field);
-		this.typeName = rs.getColumnTypeName(field);
-		this.size = rs.getColumnDisplaySize(field);
+		this.typeName = rs.getColumnTypeName(field);		
 		this.precision = rs.getPrecision(field);
 		this.scale = rs.getScale(field);
 		this.nullable = rs.isNullable(field);
@@ -29,11 +33,10 @@ public class FieldVO {
 		txt.append("	<field id=\"" + name + "\">\n");
 		txt.append("		<type-cod>" + typeCod + "</type-cod>\n");
 		txt.append("		<type-name>" + typeName + "</type-name>\n");
-		if (Types.DECIMAL == typeCod || Types.DOUBLE == typeCod || 
-				Types.FLOAT == typeCod || Types.NUMERIC == typeCod) {
+		if (scale > 0) {
 			txt.append("		<size>" + precision + "." + scale + "</size>\n");
-		} else {
-			txt.append("		<size>" + size + "</size>\n");
+		} else if (precision > 0) {
+			txt.append("		<size>" + precision + "</size>\n");
 		}
 		if (nullable == 0) {
 			txt.append("		<not-null>true</not-null>\n");
@@ -48,14 +51,6 @@ public class FieldVO {
 
 	public void setType(int type) {
 		this.typeCod = type;
-	}
-
-	public int getSize() {
-		return size;
-	}
-
-	public void setSize(int size) {
-		this.size = size;
 	}
 
 	public int getPrecision() {
@@ -96,6 +91,30 @@ public class FieldVO {
 
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+
+	public TableVO getTable() {
+		return table;
+	}
+
+	public void setTable(TableVO table) {
+		this.table = table;
+	}
+
+	public int getTypeCod() {
+		return typeCod;
+	}
+
+	public void setTypeCod(int typeCod) {
+		this.typeCod = typeCod;
+	}
+
+	public int getSeq() {
+		return seq;
+	}
+
+	public void setSeq(int seq) {
+		this.seq = seq;
 	}
 
 }

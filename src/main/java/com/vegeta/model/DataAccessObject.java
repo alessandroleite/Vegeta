@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -18,16 +18,21 @@ import oracle.jdbc.driver.OracleDriver;
 
 public class DataAccessObject {
 	
-	//TODO Jogar conexão para um arquivo de configurações.
-	//private String url = "jdbc:oracle:thin:@//127.0.0.1:1521/xe";
-	//private String user = "spartacus";
-	//private String password = "123";
-	//private String schema = "SPARTACUS";
+	//TODO Jogar conexao para um arquivo de configuracoes.
+	private String url = "jdbc:oracle:thin:@//127.0.0.1:1521/xe";
+	private String user = "spartacus";
+	private String password = "123";
+	private String schema = "SPARTACUS";
 	
-	private String url = "jdbc:oracle:thin:@//192.168.0.12:1521/desenv01.logusinfo.com.br";
-	private String user = "FLEX_LOADER_ADM";
-	private String password = "FLEX_LOADER_ADM";
-	private String schema = "FLEX_LOADER_ADM";
+	//private String url = "jdbc:oracle:thin:@//192.168.0.12:1521/desenv01.logusinfo.com.br";
+	//private String user = "FLEX_LOADER_ADM";
+	//private String password = "FLEX_LOADER_ADM";
+	//private String schema = "FLEX_LOADER_ADM";
+	
+	//private String url = "jdbc:oracle:thin:@//anaconda2.sef.eb.mil.br/sigapro.sef.eb.mil.br";
+	//private String user = "flexvision_sef";
+	//private String password = "inges.sef";
+	//private String schema = "FLEXVISION_SEF";
 	
 	private final String pathFile = "D:\\Projects\\vegeta\\files\\vegeta.xml";
 	
@@ -73,10 +78,23 @@ public class DataAccessObject {
 		while (rs.next()) {
 			TableVO table = new TableVO();
 			table.setName(rs.getString(3));
-			String sql = "select * from " + schema + "." + table.getName();
+			
+			Map<String, PrimaryKey> pks = loadPrimaryKeys(table);
+			
+			for (String pkKey : pks.keySet()) {
+				PrimaryKey pk = pks.get(pkKey);
+				System.out.println(pk.getTable().getName() + ":");
+				System.out.println("[" + pk.getName() + "]");
+				for (Integer seq : pk.getFields().keySet()) {
+					FieldVO field = pk.getFields().get(seq);
+					System.out.println(field.getSeq() + " - " + field.getName());
+				}
+			}
+			
+			/*String sql = "select * from " + schema + "." + table.getName();			
 			Statement stmFields = connection.createStatement();
 			ResultSet rsFields = stmFields.executeQuery(sql);
-			ResultSetMetaData rsMDFields = rsFields.getMetaData();
+			ResultSetMetaData rsMDFields = rsFields.getMetaData();			
 			int columnCount = rsMDFields.getColumnCount();			
 			List<FieldVO> listFields = new ArrayList<FieldVO>();			
 			for (int i = 1; i <= columnCount; i++) {
@@ -84,11 +102,36 @@ public class DataAccessObject {
 				listFields.add(field);			    
 			}
 			table.setFields(listFields);
-			tables.put(table.getName(), table);
+			tables.put(table.getName(), table);			
 			rsMDFields = null;
-			close(rsFields, stmFields);
+			close(rsFields, stmFields);*/
 		}
 		close(rs);
+	}
+	
+	private Map<String, PrimaryKey> loadPrimaryKeys(TableVO table) throws SQLException {
+		Map<String, PrimaryKey> map = new HashMap<String, PrimaryKey>();
+		ResultSet rs = null;
+		try {
+			rs = connection.getMetaData().getPrimaryKeys(null, schema, table.getName());
+			while (rs.next()) {
+				String pkName = rs.getString("PK_NAME");				
+				PrimaryKey pk = new PrimaryKey(table);				
+				if (map.containsKey(pkName)) {
+					pk = map.get(pkName);					
+				} else {
+					pk.setName(pkName);
+				}
+				FieldVO field = new FieldVO(table);
+				field.setSeq(rs.getInt("KEY_SEQ"));
+				field.setName(rs.getString("COLUMN_NAME"));
+				pk.getFields().put(field.getSeq(), field);
+				map.put(pk.getName(), pk);
+			}
+		} finally {
+			close(rs);
+		}	
+		return map;
 	}
 		
 	public void saveToFile(String txt) throws IOException {
