@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -23,17 +22,7 @@ public class DataAccessObject {
 	private String user = "spartacus";
 	private String password = "123";
 	private String schema = "SPARTACUS";
-	
-	//private String url = "jdbc:oracle:thin:@//192.168.0.12:1521/desenv01.logusinfo.com.br";
-	//private String user = "FLEX_LOADER_ADM";
-	//private String password = "FLEX_LOADER_ADM";
-	//private String schema = "FLEX_LOADER_ADM";
-	
-	//private String url = "jdbc:oracle:thin:@//anaconda2.sef.eb.mil.br/sigapro.sef.eb.mil.br";
-	//private String user = "flexvision_sef";
-	//private String password = "inges.sef";
-	//private String schema = "FLEXVISION_SEF";
-	
+		
 	private final String pathFile = "D:\\Projects\\vegeta\\files\\vegeta.xml";
 	
 	//TODO Remover objeto.
