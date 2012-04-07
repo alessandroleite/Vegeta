@@ -1,4 +1,4 @@
-package com.vegeta.model;
+package com.vegeta.domain.repository;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

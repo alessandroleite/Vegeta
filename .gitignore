@@ -1,4 +1,7 @@
-
-/.metadata
-/.settings
-/target
+.metadata
+.settings
+target
+.DS_Store
+.classpath
+.project
+.class
